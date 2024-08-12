@@ -4,7 +4,7 @@ from getmac import get_mac_address
 import sqlite3
 import time
 
-prefix = '192.168.8.'
+prefix = '192.168.0.'
 result = [None] * 254
 
 def pingHost(host):
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         thread = threading.Thread(target=pingHost, args=(host,))
         thread.start()
 
-con = sqlite3.connect("host_wather.db")
+con = sqlite3.connect("host_watcher.db")
 cur = con.cursor()
 cur.execute("CREATE TABLE IF NOT EXISTS activity(ping_time, address, mac)")
 
