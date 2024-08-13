@@ -1,7 +1,6 @@
 import sqlite3
-import http.server
-import socketserver
-import sys
+from http.server import BaseHTTPRequestHandler
+from http.server import HTTPServer
 
 PORT = 8000
 
@@ -9,13 +8,14 @@ def get_activities():
     con = sqlite3.connect("host_watcher.db")
     cur = con.cursor()
     sql = '''
-        SELECT t.ping_time, t.address, t.mac
+        SELECT t.ping_time, t.address, t.mac, t.prefix, t.host
         FROM activity t
         INNER JOIN (
             SELECT address, max(ping_time) as max_ping_time
             FROM activity
             GROUP BY address
         ) tm ON t.address = tm.address and t.ping_time = tm.max_ping_time
+        ORDER BY t.prefix, t.host
     '''
     cur.execute(sql)
     activities = cur.fetchall()
@@ -23,19 +23,41 @@ def get_activities():
     return activities
 
 
-def http():
-     pass
-    # Handler = http.server.SimpleHTTPRequestHandler
-    # with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    #     print("serving at port", PORT)
-    #     httpd.serve_forever()
+def run(server_class=HTTPServer, handler_class=BaseHTTPRequestHandler):
+  server_address = ('', 8000)
+  httpd = server_class(server_address, handler_class)
+  try:
+      httpd.serve_forever()
+  except KeyboardInterrupt:
+      httpd.server_close()
 
+class HttpGetHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write('<html><head><meta charset="utf-8">'.encode())
+        self.wfile.write('<title>HostWatcher</title></head>'.encode())
+        self.wfile.write('<body>'.encode())
+        self.wfile.write('<table>'.encode())
+        self.wfile.write('<tr>'.encode())
+        self.wfile.write('<th>Time</th>'.encode())
+        self.wfile.write('<th>IP</th>'.encode())
+        self.wfile.write('<th>MAC</th>'.encode())
+        self.wfile.write('</tr>'.encode())
+        for record in get_activities():
+            self.wfile.write('<tr>'.encode())
+            self.wfile.write(f'<td>{record[0]}</td>'.encode())
+            self.wfile.write(f'<td>{record[1]}</td>'.encode())
+            self.wfile.write(f'<td>{record[2]}</td>'.encode())
+            self.wfile.write('<tr>'.encode())
+
+        self.wfile.write('</table>'.encode())
+        self.wfile.write('</body></html>'.encode())
 
 def main():
         print(get_activities())
-        for record in get_activities():
-            print(f'{record[0]},{record[1]},{record[2]}')
-
+        run(handler_class=HttpGetHandler)
 
 
 if __name__ == "__main__":

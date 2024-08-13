@@ -30,7 +30,7 @@ def main():
 
     con = sqlite3.connect("host_watcher.db")
     cur = con.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS activity(ping_time, address, mac)")
+    cur.execute("CREATE TABLE IF NOT EXISTS activity(ping_time, address, mac, prefix, host)")
 
     rows = []
 
@@ -40,12 +40,12 @@ def main():
             mac = get_mac_address(ip=address)
             now = datetime.now()
             fmt_now = now.strftime("%Y-%m-%d %H:%M:%S")
-            row = tuple([fmt_now, str(address), str(mac)])
+            row = tuple([fmt_now, str(address), str(mac), prefix, i])
             rows.append(row)
 
 
     print(rows)
-    sql = 'INSERT INTO activity VALUES (?, ?, ?)'
+    sql = 'INSERT INTO activity VALUES (?, ?, ?, ?, ?)'
     cur.executemany(sql, rows)
     con.commit()
     con.close()
