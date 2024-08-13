@@ -11,7 +11,6 @@ result = [None] * 254
 def pingHost(host):
     global prefix
     address = prefix + '.' + str(host)
-    print(address)
     hostObject = ping(address, count=1, interval=1, timeout=2, id=None, source=None, family=None, privileged=True)
     if hostObject.is_alive:
         lock = threading.RLock()
