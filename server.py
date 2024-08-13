@@ -47,9 +47,9 @@ class HttpGetHandler(BaseHTTPRequestHandler):
         self.wfile.write('</tr>'.encode())
         for record in get_activities():
             self.wfile.write('<tr>'.encode())
-            self.wfile.write(f'<td>{record[0]}</td>'.encode())
-            self.wfile.write(f'<td>{record[1]}</td>'.encode())
-            self.wfile.write(f'<td>{record[2]}</td>'.encode())
+            self.wfile.write(f'<td style="border: 1px solid lightgray;  border-radius: 10px; padding: 6px;">{record[0]}</td>'.encode())
+            self.wfile.write(f'<td style="border: 1px solid lightgray;  border-radius: 10px; padding: 6px;">{record[1]}</td>'.encode())
+            self.wfile.write(f'<td style="border: 1px solid lightgray;  border-radius: 10px; padding: 6px;">{record[2]}</td>'.encode())
             self.wfile.write('<tr>'.encode())
 
         self.wfile.write('</table>'.encode())
