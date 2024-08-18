@@ -3,9 +3,10 @@ from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 
 PORT = 8000
+db_name = "../host_watcher.db"
 
 def get_activities():
-    con = sqlite3.connect("host_watcher.db")
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     sql = '''
         SELECT t.ping_time, t.address, t.mac, t.prefix, t.host

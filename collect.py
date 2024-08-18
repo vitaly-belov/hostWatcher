@@ -5,6 +5,7 @@ import sqlite3
 from datetime import datetime
 import sys
 
+db_name = "../host_watcher.db"
 prefix = ''
 result = [None] * 254
 
@@ -28,7 +29,7 @@ def main():
         thread = threading.Thread(target=pingHost, args=(host,))
         thread.start()
 
-    con = sqlite3.connect("host_watcher.db")
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS activity(ping_time, address, mac, prefix, host)")
 
