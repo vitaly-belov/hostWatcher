@@ -10,9 +10,6 @@ import (
 	"syscall"
 )
 
-// BUG(brainman): MessageBeep Windows api is broken on Windows 7,
-// so this example does not beep when runs as service on Windows 7.
-
 var (
 	collectFunc = syscall.MustLoadDLL("user32.dll").MustFindProc("MessageBeep")
 )
